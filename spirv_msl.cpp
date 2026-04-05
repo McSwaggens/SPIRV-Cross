@@ -10347,6 +10347,7 @@ void CompilerMSL::emit_instruction(const Instruction &instruction)
 		// ops[10] = payload variable
 		statement("{");
 		statement("  intersector<instancing> _mtl_i;");
+		statement("  uint _mtl_ray_flags = ", to_expression(ops[1]), ";");
 		statement("  ray _mtl_r(", to_expression(ops[6]), ", ", to_expression(ops[8]), ", ",
 		          to_expression(ops[7]), ", ", to_expression(ops[9]), ");");
 		statement("  auto _mtl_isect = _mtl_i.intersect(_mtl_r, ", to_non_uniform_aware_expression(ops[0]),

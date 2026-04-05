@@ -17950,6 +17950,10 @@ string CompilerMSL::builtin_qualifier(BuiltIn builtin)
 			return "primitive_id";
 		case ExecutionModelMeshEXT:
 			return "primitive_id";
+		case ExecutionModelClosestHitKHR:
+		case ExecutionModelAnyHitKHR:
+		case ExecutionModelIntersectionKHR:
+			return "primitive_id";
 		default:
 			SPIRV_CROSS_THROW("PrimitiveId is not supported in this execution model.");
 		}
@@ -18124,6 +18128,15 @@ string CompilerMSL::builtin_qualifier(BuiltIn builtin)
 	case BuiltInIncomingRayFlagsKHR:
 		return "ray_flags";
 
+	case BuiltInHitKindKHR:
+		return "hit_kind";
+
+	case BuiltInHitTNV:
+		return "max_distance";
+
+	case BuiltInRayGeometryIndexKHR:
+		return "geometry_id";
+
 	default:
 		return "unsupported-built-in";
 	}
@@ -18264,7 +18277,12 @@ string CompilerMSL::builtin_type_decl(BuiltIn builtin, uint32_t id)
 
 	case BuiltInInstanceCustomIndexKHR:
 	case BuiltInIncomingRayFlagsKHR:
+	case BuiltInHitKindKHR:
+	case BuiltInRayGeometryIndexKHR:
 		return "uint";
+
+	case BuiltInHitTNV:
+		return "float";
 
 	default:
 		return "unsupported-built-in-type";

@@ -10371,6 +10371,8 @@ void CompilerMSL::emit_instruction(const Instruction &instruction)
 	{
 		// In the combined MSL pipeline model, the intersection shader is inlined
 		// as a helper function. reportIntersectionEXT always accepts.
+		// ops[2] = hit distance, ops[3] = hit kind
+		statement("float _mvk_isect_dist = ", to_expression(ops[2]), ";");
 		forced_temporaries.insert(ops[1]);
 		emit_op(ops[0], ops[1], "true", false);
 		flush_control_dependent_expressions(current_emitting_block->self);

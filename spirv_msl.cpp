@@ -10462,6 +10462,9 @@ void CompilerMSL::emit_instruction(const Instruction &instruction)
 		statement("{");
 		statement("  intersector<instancing> _mtl_i;");
 		statement("  uint _mtl_ray_flags = ", to_expression(ops[1]), ";");
+		statement("  uint _mvk_sbt_offset = ", to_expression(ops[3]), ";");
+		statement("  uint _mvk_sbt_stride = ", to_expression(ops[4]), ";");
+		statement("  uint _mvk_miss_index = ", to_expression(ops[5]), ";");
 		statement("  ray _mtl_r(", to_expression(ops[6]), ", ", to_expression(ops[8]), ", ",
 		          to_expression(ops[7]), ", ", to_expression(ops[9]), ");");
 		statement("  if ((_mtl_ray_flags & ", RayFlagsOpaqueKHRMask, ") != 0)");
@@ -10495,6 +10498,7 @@ void CompilerMSL::emit_instruction(const Instruction &instruction)
 	{
 		// Emit a marker that MoltenVK's combined MSL pipeline will replace
 		// with a call to the inlined callable helper function.
+		statement("uint _mvk_callable_index = ", to_expression(ops[0]), ";");
 		statement("/* MVK_EXECUTE_CALLABLE */");
 		flush_control_dependent_expressions(current_emitting_block->self);
 		break;
@@ -10505,7 +10509,7 @@ void CompilerMSL::emit_instruction(const Instruction &instruction)
 		// In the combined MSL pipeline model, the intersection shader is inlined
 		// as a helper function. reportIntersectionEXT always accepts.
 		// ops[2] = hit distance, ops[3] = hit kind
-		statement("float _mvk_isect_dist = ", to_expression(ops[2]), ";");
+		statement("float _mvk_isect_dist_", ops[1], " = ", to_expression(ops[2]), ";");
 		forced_temporaries.insert(ops[1]);
 		emit_op(ops[0], ops[1], "true", false);
 		flush_control_dependent_expressions(current_emitting_block->self);

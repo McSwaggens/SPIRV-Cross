@@ -10464,6 +10464,25 @@ void CompilerMSL::emit_instruction(const Instruction &instruction)
 		statement("  uint _mtl_ray_flags = ", to_expression(ops[1]), ";");
 		statement("  ray _mtl_r(", to_expression(ops[6]), ", ", to_expression(ops[8]), ", ",
 		          to_expression(ops[7]), ", ", to_expression(ops[9]), ");");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsOpaqueKHRMask, ") != 0)");
+		statement("    _mtl_i.force_opacity(forced_opacity::opaque);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsNoOpaqueKHRMask, ") != 0)");
+		statement("    _mtl_i.force_opacity(forced_opacity::non_opaque);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsTerminateOnFirstHitKHRMask, ") != 0)");
+		statement("    _mtl_i.accept_any_intersection(true);");
+		// RayFlagsSkipClosestHitShaderKHRMask is not available in MSL.
+		statement("  if ((_mtl_ray_flags & ", RayFlagsCullBackFacingTrianglesKHRMask, ") != 0)");
+		statement("    _mtl_i.set_triangle_cull_mode(triangle_cull_mode::back);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsCullFrontFacingTrianglesKHRMask, ") != 0)");
+		statement("    _mtl_i.set_triangle_cull_mode(triangle_cull_mode::front);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsCullOpaqueKHRMask, ") != 0)");
+		statement("    _mtl_i.set_opacity_cull_mode(opacity_cull_mode::opaque);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsCullNoOpaqueKHRMask, ") != 0)");
+		statement("    _mtl_i.set_opacity_cull_mode(opacity_cull_mode::non_opaque);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsSkipTrianglesKHRMask, ") != 0)");
+		statement("    _mtl_i.set_geometry_cull_mode(geometry_cull_mode::triangle);");
+		statement("  if ((_mtl_ray_flags & ", RayFlagsSkipAABBsKHRMask, ") != 0)");
+		statement("    _mtl_i.set_geometry_cull_mode(geometry_cull_mode::bounding_box);");
 		statement("  auto _mtl_isect = _mtl_i.intersect(_mtl_r, ", to_non_uniform_aware_expression(ops[0]),
 		          ", ", to_expression(ops[2]), ");");
 		statement("  (void)_mtl_isect;");
